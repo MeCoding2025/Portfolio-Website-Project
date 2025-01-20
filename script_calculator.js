@@ -1,8 +1,28 @@
 let runningTotal = 0;
 let buffer = "0";
-let previousOperator;
+let previousOperator = null;
+let calculateHistory = [];
+let lastNumber = "";
+let isNewNumber = true;
 
-const screen = document.querySelector(".screen");
+const screen = document.querySelector(".current-operation");
+const history = document.querySelector(".history");
+
+function addToHistory(firstNum, operator, secondNum, result) {
+    const calculation = `${firstNum} ${operator} ${secondNum} = ${result}`;
+    calculateHistory.unshift(calculation);
+    if (calculateHistory.length > 4) {
+        calculateHistory.pop();
+    }
+    updateHistoryDisplay();
+}
+
+function updateHistoryDisplay() {
+    if (history) { 
+        history.innerHTML = calculateHistory.map(value => `<div class="history-item">${value}</div>`).join("");
+    }
+}
+
 
 function buttonClick(value) {
     if (isNaN(value) && value !== ",") {
@@ -18,17 +38,28 @@ function handleSymbol(symbol) {
         case "C":
             buffer = "0";
             runningTotal = 0;
+            previousOperator = null;
+            lastNumber = "";
+            isNewNumber = true;
             break;
         case "=":
-            if (previousOperator === null) {
+            if (previousOperator === null || isNewNumber) {
                 return;
             }
-            flushOperation(parseFloat(buffer.replace(",", ".")));
+            
+            const floatBuffer = parseFloat(buffer.replace(",", "."));
+            
+            flushOperation(floatBuffer);  // Perform the operation
+            
+            addToHistory(lastNumber, previousOperator, floatBuffer, runningTotal); // Add to history
+            
+            buffer = ("" + runningTotal).replace(".", ","); // Update display buffer
+            screen.innerText = buffer;  // Update screen
+            
             previousOperator = null;
-            // Convert point back to comma for display
-            buffer = ("" + runningTotal).replace(".", ",");
             runningTotal = 0;
-            break;
+            isNewNumber = true;
+            break;  
         case "←":
             if (buffer.length === 1) {
                 buffer = "0";
@@ -59,7 +90,8 @@ function handleMath(symbol) {
     }
 
     previousOperator = symbol;
-    buffer = "0";
+    lastNumber = buffer;
+    isNewNumber = true;
 }
 
 function flushOperation(floatBuffer) {
@@ -70,6 +102,10 @@ function flushOperation(floatBuffer) {
     } else if (previousOperator === "×") {
         runningTotal *= floatBuffer;
     } else if (previousOperator === "÷") {
+        if (floatBuffer === 0) {
+            buffer = "Error";
+            return;
+        }
         runningTotal /= floatBuffer;
     }
 }
@@ -81,8 +117,9 @@ function handleNumber(numberString) {
         }
         buffer += numberString;
     } else {
-        if (buffer === "0") {
+        if (buffer === "0" || isNewNumber) {
             buffer = numberString;
+            isNewNumber = false;
         } else {
             buffer += numberString;
         }
@@ -91,7 +128,9 @@ function handleNumber(numberString) {
 
 function init() {
     document.querySelector(".calc-buttons").addEventListener("click", function(event) {
-        buttonClick(event.target.innerText);
+        if (event.target.tagName === "BUTTON") {
+            buttonClick(event.target.innerText);
+        }
     });
 }
 
