@@ -90,4 +90,30 @@
   .text-container {
     text-align: justify;
   }
+
+  .contact-form-container {
+    flex: auto;
+    min-width: auto;
+  }
+
+  .theme-toggle-container {
+    position: fixed;
+    top: 5rem;
+    right: 1rem;
+    z-index: 1000;
+  }
+
+  .theme-toggle-btn {
+    position: relative;
+    width: 40px;
+    height: 20px;
+    background-color: var(--card-background);
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    padding: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    opacity: 0.3;
+  }
 }
