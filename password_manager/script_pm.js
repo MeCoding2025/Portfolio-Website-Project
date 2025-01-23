@@ -53,8 +53,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     title: 'Account successfully created!',
                     text: "Don't froget to save your Password, cannot be restored!",
                     icon: 'success' 
-                })
-                window.location.href = 'logged_in_pm.html';
+                }).then(() => {
+                    setTimeout(() => {
+                        window.location.href = 'logged_in_pm.html';
+                    }, 1000); // 1000 milliseconds = 1 seconds
+                });
             }
         });
 
