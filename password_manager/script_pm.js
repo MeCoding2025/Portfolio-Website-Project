@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('loggedInUser', username);
                 swal({
                     title: 'Account successfully created!',
-                    text: "Don't froget to save your Password, cannot be restored!",
+                    text: "Don't forget to save your Password, it cannot be restored!",
                     icon: 'success' 
                 }).then(() => {
                     setTimeout(() => {
